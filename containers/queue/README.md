@@ -9,9 +9,9 @@ template<
 > class queue;
 ```
 
-可以看见 queue 使用了 `deque` 作为底层容器提供先进先出规则。使用的 `deque` 的 push_back, pop_front 实现先进先出。
+queue 使用了 `deque` 作为底层容器提供先进先出规则。使用 `deque` 的 push_back, pop_front 实现先进先出。
 
-这种使用其他底层容器的容器叫做 container adapter，类似 stack 也是这样。
+这种使用其他底层容器的容器叫做 container adapter，stack 也是这样。
 
 queue 还可以使用 list 作为底层容器。
 
@@ -36,7 +36,7 @@ bool operator()( const T& lhs, const T& rhs ) const;
 // 函数返回 true 如果 lhs < rhs
 ```
 
-在 priority_queue 实现中 Compare 返回 true 时第一个参数排在第二个参数钱前面，所以最后一个元素是最大的元素。
+在 priority_queue 的实现中 Compare 返回 true 把第一个参数排在第二个参数前面，所以最后一个元素是最大的元素。
 
 如果需要自定义排序和弹出元素需要记住两点：
 

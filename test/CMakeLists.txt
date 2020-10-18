@@ -1,6 +1,6 @@
 file(GLOB SRCS *.cpp)
 
-ADD_EXECUTABLE(testmain ${SRCS} containers/queue/queue_unittest.cpp)
+ADD_EXECUTABLE(testmain ${SRCS} containers/queue/queue_unittest.cpp containers/vector/vector_unittest.cpp)
 
 #TARGET_LINK_LIBRARIES(testmain
 #        libfoo
