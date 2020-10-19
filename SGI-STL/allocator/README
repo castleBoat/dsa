@@ -1,0 +1,25 @@
+# allocator
+
+
+## new_allocator
+
+ext/new_allocator 中定义了 `__gnu_cxx::new_allocator<_Tp>` 通过 new, delete 提供分配空间和释放空间，
+
+分配对象（调用构造）和释放对象（调用析构）的两对接口：
+
+- allocate: 使用 new 分配 n 个 T 对象大小的空间，但是不调用构造函数. `static_cast<_Tp*>(::operator new(__n * sizeof(_Tp)));`
+- deallocate: 使用 delete 释放空间，但是不调用析构函数, `::operator delete(__p);`
+- constructor: 在给定地址调用构造函数 (placement new)，`::new((void *)__p) _Up(std::forward<_Args>(__args)...)`
+- destroy: 调用析构函数但是不释放空间, `__p->~_Up();` 
+
+# std::allocator
+
+基类 `std::__allocator_base` 实际就是 `new_allocator`.
+
+- 内部结构 allocator<_Tp>::rebind<_Tp1>: 使用 _Tp1 类型的 allocator 对象。
+
+```c++
+template<typename _Tp1>
+struct rebind
+{ typedef allocator<_Tp1> other; };
+```
