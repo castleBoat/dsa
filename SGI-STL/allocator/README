@@ -1,9 +1,8 @@
 # allocator
 
-
 ## new_allocator
 
-ext/new_allocator 中定义了 `__gnu_cxx::new_allocator<_Tp>` 通过 new, delete 提供分配空间和释放空间，
+ext/new_allocator 使用 new, delete 定义了 `__gnu_cxx::new_allocator<_Tp>` 提供分配空间和释放空间，
 
 分配对象（调用构造）和释放对象（调用析构）的两对接口：
 
@@ -12,9 +11,31 @@ ext/new_allocator 中定义了 `__gnu_cxx::new_allocator<_Tp>` 通过 new, delet
 - constructor: 在给定地址调用构造函数 (placement new)，`::new((void *)__p) _Up(std::forward<_Args>(__args)...)`
 - destroy: 调用析构函数但是不释放空间, `__p->~_Up();` 
 
+## malloc_allocator
+
+ext/malloc_allocator 使用 malloc, free 定义了 `__gnu_cxx::malloc_allocator<_Tp>`，同样使用两套接口。
+
+其中 allocate 和 deallocate 使用 malloc 和 free 实现。
+
+construtor 和 destroy 实现和 ext/new_allocator 相同。
+
+## __mt_alloc
+
+ext/mt_allocator 文件定义的类，提供固定大小分配的分配器，为每个线程每个固定大小（2的幂）维护一个 freelist，
+
+还有一个 global freelist。
+
+## __pool_alloc
+
+ext/pool_allocator 文件定义的类，提供各种几种分配方式：
+
+1. 如果指定了强制就用 new 分配
+2. 大于 _S_max_bytes(128) 使用 new 分配
+3. 其他大小使用 round_up(request_size)，找到 8 的倍数 freelist，从中分配。另外内存池回收的对象永不释放。
+
 # std::allocator
 
-基类 `std::__allocator_base` 实际就是 `new_allocator`.
+基类 `std::__allocator_base` 实际就是 `new_allocator` 换了一个命名空间.
 
 - 内部结构 allocator<_Tp>::rebind<_Tp1>: 使用 _Tp1 类型的 allocator 对象。
 
@@ -23,3 +44,16 @@ template<typename _Tp1>
 struct rebind
 { typedef allocator<_Tp1> other; };
 ```
+
+# stl_construct.h
+
+利用 placement new 和调用析构函数提供 construct 和 destroy 接口。
+
+其中有使用 `__has_trivial_destructor(type)` 接口判断类型是否 trivial 的析构，如果否则调用析构；如果是则没有析构。
+
+判断是否是 trivial 析构这个接口还没找到实现，是编译器内部接口。
+
+# bits/alloc_traits
+
+接受 allocator 做为模板参数，为所有的 allocator type 封装了统一的上面的两套接口。
+
