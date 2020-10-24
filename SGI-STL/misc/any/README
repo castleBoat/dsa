@@ -1,0 +1,37 @@
+
+# any
+
+any 是 c++17 引入的可以包含任意类型的元素的类型，并且提供 `std::any_cast` 把 any 对象转换为目标类型引用或目标类型。
+
+如果不能转换，则抛出 `std::bad_any_cast` 异常。
+
+# 一般实现
+
+一般实现有这些：
+
+1. any 是模板类型，内部保存原始类型变量 `_Tp _ele;`；转换时通过 `dynamic_cast<_dst>(_ele)` 判断否能转换
+
+2. any 是模板类型，内部保存原始类型 typeinfo 信息；转换时通过 `typeid(_dst)` 判断能否转换
+
+
+# STL 实现
+
+STL 实现与上面两种不同，它内部定义了管理类模板
+
+```c++
+template<typename _Tp>
+  struct _Manager_external
+  {
+static void
+_S_manage(_Op __which, const any* __anyp, _Arg* __arg);
+  };
+```
+
+其中 `_S_manage` 是 static 函数，转换时通过 any 内部的 `_S_manage` 函数和使用  dst 时 any 的 `_S_manage` 函数是否相同判断,
+
+因为对于模板参数不同时生成静态函数地址也不同。
+
+```c++
+if (__any->_M_manager == &any::_Manager<decay_t<_Tp>>::_S_manage) {
+}
+```
