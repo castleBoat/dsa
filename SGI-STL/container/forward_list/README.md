@@ -7,7 +7,7 @@
 
 实现上内部只保留了 `_M_head` 头节点，dump 节点，它的 `_M_next` 指向链表的第一个节点。
 
-主要有这几个类，类之间的关系为：
+主要几个类之间的关系为：
 
 ![forward_list类关系图](https://github.com/castleBoat/dsa/raw/main/SGI-STL/img/forward_list.png)
 
