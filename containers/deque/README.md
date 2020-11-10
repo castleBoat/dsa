@@ -13,7 +13,7 @@ deque 双端队列，支持队首、队尾插入和删除操作，操作都是 `
 
 所以底层的迭代器更复杂，有 first, last, cur, node 四个元素。
 
-SGI STL 中使用 _map 指向二次索引数组，每个成员指向一个元素数组(node)
+SGI STL 中使用 `_map` 指向二次索引数组，每个成员指向一个元素数组(node)
 
 - first: 指向数组起始元素位置
 - last: 指向数组末尾元素，数组范围是 [first, last)

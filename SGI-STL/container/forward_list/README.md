@@ -9,13 +9,13 @@
 
 主要几个类之间的关系为：
 
-![forward_list类关系图](https://github.com/castleBoat/dsa/raw/main/SGI-STL/img/forward_list.png)
-
 - `_Fwd_list_node_base`: 包含指向下一个节点的 `_M_next` 指针
 - `_Fwd_list_node`: 继承 `_Fwd_list_node_base`，并存储实际类型成员 `_M_storage`
 - `_Fwd_list_base::_Fwd_list_impl`: 内部类，继承 `_Fwd_list_node`, 并包含链表的头节点 `_M_head`
 - `_Fwd_list_base`: 基础类，包含一个 `_Fwd_list_impl` 的成员
 - `forward_list`: 继承 `_Fwd_list_base`
+
+![forward_list类关系图](https://github.com/castleBoat/dsa/raw/main/SGI-STL/img/forward_list.png)
 
 
 # 使用
