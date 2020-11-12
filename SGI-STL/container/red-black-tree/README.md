@@ -40,13 +40,12 @@ struct _Rb_tree_node : public _Rb_tree_node_base
 
 实现上 header 作用如下：
 
-```bash
-```
+![rbt_header](https://github.com/castleBoat/dsa/raw/main/SGI-STL/img/rbt_header.png)
 
-header._M_parent 指向 root 节点
-header._M_left 指向最左的节点（最小节点）
-header._M_right 指向最右的节点（最大节点）
-root._M_parent 指向 header 节点
+  - header._M_parent 指向 root 节点
+  - header._M_left 指向最左的节点（最小节点）
+  - header._M_right 指向最右的节点（最大节点）
+  - root._M_parent 指向 header 节点
 
 ## 迭代器
 
@@ -85,3 +84,28 @@ class _Rb_tree
     _Rb_tree_impl<_Compare> _M_impl;
 };
 ```
+
+## 接口
+
+- lower_bound(k): 查找**大于或等于** k 的最小值，如果没找到返回 end()
+- upper_bound(k): 查找**大于** k 的最小值，如果没找到返回 end()
+- equal_range():
+
+这两个函数在范围查找时很有用
+
+- `_M_get_insert_unique_pos(k)`: 在红黑树中查找元素应插入位置。如果存在相同元素，则返回 pair(指向相同元素的迭代器, nullptr)；如果不存在则返回 pair(nullptr, 指向应插入元素位置叶子节点的迭代器)
+- `_M_get_insert_equal_pos(k)`: 在红黑树中查找元素应插入位置，可以插入相同元素。返回 pair(nullptr, 指向应插入元素位置叶子节点的迭代器)
+
+这两个函数在插入元素时首先查找位置时使用
+
+- `_M_insert(__p, __v)`: 内部函数，插入 v 元素到叶子节点 p 下。
+
+插入元素内部的函数，插入元素到叶子节点的孩子节点，并调整红黑树到平衡。
+
+- `_M_insert_unique`: 插入元素到树中，不允许重复元素。插入成功返回 pair(插入元素迭代器, true)；失败返回 pair(指向相同元素的迭代器, false)
+- `_M_insert_equal_`: 插入元素到树中，允许重复元素。插入成功返回 pair(插入元素迭代器, true)；失败返回 pair(指向相同元素的迭代器, false)
+
+先查找元素应该插入的叶子节点位置，然后调用上面的内部插入节点，并调整红黑树到平衡。
+
+- `find`:
+- `count`:
