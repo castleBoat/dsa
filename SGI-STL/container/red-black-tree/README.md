@@ -2,7 +2,7 @@
 
 # 内部结构
 
-- `_Rb_tree_node_base`: 基础机构，定义了 `_M_color`, `_M_parent`, `_M_left`, `_M_right` 指针。
+- `_Rb_tree_node_base`: 树的基础节点结构，定义了 `_M_color`, `_M_parent`, `_M_left`, `_M_right` 指针。
 
 ```c++
 struct _Rb_tree_node_base
@@ -47,25 +47,9 @@ struct _Rb_tree_node : public _Rb_tree_node_base
   - header._M_right 指向最右的节点（最大节点）
   - root._M_parent 指向 header 节点
 
-## 迭代器
+## 红黑树结构
 
-- `_Rb_tree_iterator<_Tp>`: 迭代器，内部保存指向 `_Rb_tree_node_base` 的指针，访问元素时转换为 `_Rb_tree_node<_Tp>`
-
-```c++
-template<typename _Tp>
-struct _Rb_tree_iterator
-{
-    _Base_ptr _M_node;
-};
-```
-
-迭代器支持 `++`, `--` 操作，分别是找到红黑树中大于当前值的最小值，小于当前值的最大值。具体做法是：
-
-  - ++: 先找右孩子的最左节点。如果没有右孩子，如果当前节点是右孩子，则当前节点指向父节点，再向上寻找。直到当前节点不是右孩子的父节点。
-  - --: 先找左孩子的最右节点。如果没有左孩子，如果当前节点是左孩子，则当前节点指向父节点，再向上寻找。直到当前节点不是左孩子的父节点。
-
-- `_Rb_tree<>`: 模板变量有 `_Key`, `_Val`, `_KeyOfValue`, `_Compare`，其中 `_KeyOfValue` 作用？
-- `_Rb_tree::_Rb_tree_impl`:
+`_Rb_tree` 结构体。
 
 ```c++
 template<typename _Key, typename _Val, typename _KeyOfValue,
@@ -84,6 +68,32 @@ class _Rb_tree
     _Rb_tree_impl<_Compare> _M_impl;
 };
 ```
+
+模板参数的意义：
+
+- `_Key`: key 数据类型
+- `_Val`: value 数据类型。map 中的这个类型为 `std::pair<key, value>`
+- `_KeyOfValue`: 通过 value 找到 key 的 functor。map 中就是通过 pair 找到 pair.first
+- `_Compare`: 比较 key 大小的 functor。map 中默认是 std::less。
+
+内部定义 `_Rb_tree_impl` 结构体，继承 `_Rb_tree_header`，并包含成员对象 `_M_impl` 做为实际结构。
+
+## 迭代器
+
+`_Rb_tree_iterator<_Tp>` 迭代器，内部保存指向 `_Rb_tree_node_base` 的指针，访问元素时转换为 `_Rb_tree_node<_Tp>`
+
+```c++
+template<typename _Tp>
+struct _Rb_tree_iterator
+{
+    _Base_ptr _M_node;
+};
+```
+
+迭代器支持 `++`, `--` 操作，分别是找到红黑树中大于当前值的最小值，小于当前值的最大值。具体做法是：
+
+- ++: 先找右孩子的最左节点。如果没有右孩子，如果当前节点是右孩子，则当前节点指向父节点，再向上寻找。直到当前节点不是右孩子的父节点。
+- --: 先找左孩子的最右节点。如果没有左孩子，如果当前节点是左孩子，则当前节点指向父节点，再向上寻找。直到当前节点不是左孩子的父节点。
 
 ## 接口
 
@@ -109,3 +119,7 @@ class _Rb_tree
 
 - `find`:
 - `count`:
+
+## 平衡
+
+红黑树如何保证插入、删除之后的平衡
